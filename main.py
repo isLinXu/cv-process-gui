@@ -25,13 +25,12 @@ class ImageProcessingGUI:
         self.save_button = tk.Button(self.top_frame, text="Save Image", command=self.save_image, width=10, height=1)
         self.save_button.pack(side=tk.RIGHT, padx=5)
 
+
         # 第一列按钮
-        self.gray_button = tk.Button(self.button_frame, text="Grayscale", command=self.convert_grayscale, width=10,
-                                     height=1)
+        self.gray_button = tk.Button(self.button_frame, text="Grayscale", command=self.convert_grayscale, width=10,height=1)
         self.gray_button.grid(row=0, column=0, pady=5)
 
-        self.edge_button = tk.Button(self.button_frame, text="Edge Detection", command=self.edge_detection, width=10,
-                                     height=1)
+        self.edge_button = tk.Button(self.button_frame, text="Edge Detection", command=self.edge_detection, width=10,height=1)
         self.edge_button.grid(row=1, column=0, pady=5)
 
         self.rotate_button = tk.Button(self.button_frame, text="Rotate", command=self.rotate_image, width=10, height=1)
@@ -76,23 +75,23 @@ class ImageProcessingGUI:
                                           width=10, height=1)
         self.threshold_button.grid(row=4, column=2, pady=5)
 
-        self.canvas = tk.Canvas(master, width=800, height=600)
-        self.canvas.pack(side=tk.RIGHT)
-
         # 在底部添加自定义缩放输入框和按钮
         self.scale_label = tk.Label(self.button_frame, text="Scale Ratio")
         self.scale_label.grid(row=7, column=0)
         self.scale_entry = tk.Entry(self.button_frame)
         self.scale_entry.grid(row=7, column=1)
         self.scale_button = tk.Button(self.button_frame, text="Custom Scale", command=self.custom_scale_image, width=15,
-                                          height=2)
+                                      height=2)
         self.scale_button.grid(row=7, column=2, pady=5)
 
         # 在底部添加自适应阈值按钮
         self.adaptive_threshold_button = tk.Button(self.button_frame, text="Adaptive Threshold",
-                                                       command=self.adaptive_threshold, width=15, height=2)
+                                                   command=self.adaptive_threshold, width=15, height=2)
         self.adaptive_threshold_button.grid(row=8, column=0, pady=5)
 
+
+        self.canvas = tk.Canvas(master, width=800, height=600)
+        self.canvas.pack(side=tk.RIGHT)
 
 
     def open_image(self):
