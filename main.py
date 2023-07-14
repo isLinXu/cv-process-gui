@@ -7,12 +7,17 @@ from cvlibs.process import CVProcess  # 导入CVProcess类
 class ImageProcessingGUI:
     def __init__(self, master):
         self.master = master
-        master.title("Image Processing GUI")
+        master.title("Image Processing GUI(©️islinxu)")
 
         self.original_image = None
         self.processed_image = None
-        self.cv_process = CVProcess()  # 创建CVProcess类的实例
+        # 创建CVProcess类的实例
+        self.cv_process = CVProcess()
+        # 初始化界面布局
+        self.gui_init()
 
+    def gui_init(self):
+        master = self.master
         self.button_frame = tk.Frame(master)
         self.button_frame.pack(side=tk.LEFT, padx=10, pady=10)
 
@@ -30,7 +35,8 @@ class ImageProcessingGUI:
         self.gray_button = tk.Button(self.button_frame, text="Grayscale", command=self.convert_grayscale, width=10,height=1)
         self.gray_button.grid(row=0, column=0, pady=5)
 
-        self.edge_button = tk.Button(self.button_frame, text="Edge Detection", command=self.edge_detection, width=10, height=1)
+        self.edge_button = tk.Button(self.button_frame, text="Edge Detection", command=self.edge_detection, width=10,
+                                     height=1)
         self.edge_button.grid(row=1, column=0, pady=5)
 
         self.rotate_button = tk.Button(self.button_frame, text="Rotate", command=self.rotate_image, width=10, height=1)
@@ -42,33 +48,39 @@ class ImageProcessingGUI:
         self.scale_button = tk.Button(self.button_frame, text="Scale", command=self.scale_image, width=10, height=1)
         self.scale_button.grid(row=4, column=0, pady=5)
 
-        self.hist_eq_button = tk.Button(self.button_frame, text="Histogram Equalization", command=self.hist_eq_image,width=15, height=1)
+        self.hist_eq_button = tk.Button(self.button_frame, text="Histogram Equalization", command=self.hist_eq_image,
+                                        width=15, height=1)
         self.hist_eq_button.grid(row=5, column=0, pady=5)
 
-        self.morph_button = tk.Button(self.button_frame, text="Morphology", command=self.morph_image, width=10, height=1)
+        self.morph_button = tk.Button(self.button_frame, text="Morphology", command=self.morph_image, width=10,
+                                      height=1)
         self.morph_button.grid(row=6, column=0, pady=5)
 
         self.blur_button = tk.Button(self.button_frame, text="Blur", command=self.blur_image, width=10, height=1)
         self.blur_button.grid(row=7, column=0, pady=5)
 
-        self.sharpen_button = tk.Button(self.button_frame, text="Sharpen", command=self.sharpen_image, width=10, height=1)
+        self.sharpen_button = tk.Button(self.button_frame, text="Sharpen", command=self.sharpen_image, width=10,
+                                        height=1)
         self.sharpen_button.grid(row=8, column=0, pady=5)
 
-        self.noise_button = tk.Button(self.button_frame, text="noise reduction", command=self.noise_reduction, width=10,height=1)
+        self.noise_button = tk.Button(self.button_frame, text="noise reduction", command=self.noise_reduction, width=10,
+                                      height=1)
         self.noise_button.grid(row=9, column=0, pady=5)
 
-        self.contour_detection_button = tk.Button(self.button_frame, text="contour_detection", command=self.contour_detection, width=10,height=1)
+        self.contour_detection_button = tk.Button(self.button_frame, text="contour_detection",
+                                                  command=self.contour_detection, width=10, height=1)
         self.contour_detection_button.grid(row=10, column=0, pady=5)
 
-        self.color_space_conversion_button = tk.Button(self.button_frame, text="color_space_conversion",command=self.color_space_conversion, width=15,height=1)
+        self.color_space_conversion_button = tk.Button(self.button_frame, text="color_space_conversion",
+                                                       command=self.color_space_conversion, width=15, height=1)
         self.color_space_conversion_button.grid(row=11, column=0, pady=5)
 
-        self.adaptive_threshold_button = tk.Button(self.button_frame, text="Adaptive Threshold",command=self.adaptive_threshold, width=10, height=1)
+        self.adaptive_threshold_button = tk.Button(self.button_frame, text="Adaptive Threshold",
+                                                   command=self.adaptive_threshold, width=10, height=1)
         self.adaptive_threshold_button.grid(row=12, column=0, pady=5)
 
-        self.canvas = tk.Canvas(master, width=1080, height=960)
+        self.canvas = tk.Canvas(master, width=1080, height=800, borderwidth=1, relief="solid")
         self.canvas.pack(side=tk.RIGHT)
-
 
         # 底部输入框和滑动条
         self.common_label = tk.Label(self.master, text="input number:")
@@ -87,12 +99,11 @@ class ImageProcessingGUI:
         self.common_slider.set(0)
         self.common_slider.place(relx=0.3, rely=0.9)
 
-        self.brightness_button = tk.Button(self.master, text="Apply Brightness", command=self.adjust_brightness,
-                                           width=10, height=1)
+        self.brightness_button = tk.Button(self.master, text="Apply Brightness", command=self.adjust_brightness, width=10, height=1)
         self.brightness_button.place(relx=0.7, rely=0.88)
 
         self.threshold_label = tk.Label(self.master, text="Threshold")
-        self.threshold_button = tk.Button(self.master, text="Apply Threshold", command=self.apply_threshold, width=10,height=1)
+        self.threshold_button = tk.Button(self.master, text="Apply Threshold", command=self.apply_threshold, width=10, height=1)
         self.threshold_button.place(relx=0.7, rely=0.93)
 
 
