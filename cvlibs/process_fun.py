@@ -70,3 +70,46 @@ def pyramid(img, operation, level):
         return cv2.pyrUp(img, dstsize=(img.shape[1]*2, img.shape[0]*2))
     else:
         return cv2.pyrDown(img, dstsize=(img.shape[1]//2, img.shape[0]//2))
+
+def find_contours(img):
+    img_gray = grayscale(img)
+    img_canny = canny_edge_detection(img_gray, 100, 200)
+    contours, _ = cv2.findContours(img_canny, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    img_contours = img.copy()
+    cv2.drawContours(img_contours, contours, -1, (0, 255, 0), 2)
+    return img_contours
+
+def template_matching(img, template_path):
+    img_gray = grayscale(img)
+    template = cv2.imread(template_path, 0)
+    w, h = template.shape[::-1]
+    res = cv2.matchTemplate(img_gray, template, cv2.TM_CCOEFF_NORMED)
+    min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+    top_left = max_loc
+    bottom_right = (top_left[0] + w, top_left[1] + h)
+    img_matched = img.copy()
+    cv2.rectangle(img_matched, top_left, bottom_right, (0, 255, 0), 2)
+    return img_matched
+
+def hough_lines(img):
+    img_gray = grayscale(img)
+    img_canny = canny_edge_detection(img_gray, 100, 200)
+    lines = cv2.HoughLinesP(img_canny, 1, np.pi/180, 100, minLineLength=100, maxLineGap=10)
+    img_lines = img.copy()
+    for line in lines:
+        x1, y1, x2, y2 = line[0]
+        cv2.line(img_lines, (x1, y1), (x2, y2), (0, 255, 0), 2)
+    return img_lines
+
+def hough_circles(img):
+    img_gray = grayscale(img)
+    img_blur = cv2.medianBlur(img_gray, 5)
+    circles = cv2.HoughCircles(img_blur, cv2.HOUGH_GRADIENT, 1, 20, param1=50, param2=30, minRadius=0, maxRadius=0)
+    img_circles = img.copy()
+    if circles is not None:
+        circles = np.uint16(np.around(circles))
+        for i in circles[0, :]:
+            cv2.circle(img_circles, (i[0], i[1]), i[2], (0, 255, 0), 2)
+            cv2.circle(img_circles, (i[0], i[1]), 2, (0, 0, 255), 3)
+        return img_circles
+
