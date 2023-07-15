@@ -52,31 +52,25 @@ class ImageProcessingGUI:
                                         width=15, height=1)
         self.hist_eq_button.grid(row=5, column=0, pady=5)
 
-        self.morph_button = tk.Button(self.button_frame, text="Morphology", command=self.morph_image, width=10,
-                                      height=1)
+        self.morph_button = tk.Button(self.button_frame, text="Morphology", command=self.morph_image, width=10,height=1)
         self.morph_button.grid(row=6, column=0, pady=5)
 
         self.blur_button = tk.Button(self.button_frame, text="Blur", command=self.blur_image, width=10, height=1)
         self.blur_button.grid(row=7, column=0, pady=5)
 
-        self.sharpen_button = tk.Button(self.button_frame, text="Sharpen", command=self.sharpen_image, width=10,
-                                        height=1)
+        self.sharpen_button = tk.Button(self.button_frame, text="Sharpen", command=self.sharpen_image, width=10, height=1)
         self.sharpen_button.grid(row=8, column=0, pady=5)
 
-        self.noise_button = tk.Button(self.button_frame, text="noise reduction", command=self.noise_reduction, width=10,
-                                      height=1)
+        self.noise_button = tk.Button(self.button_frame, text="noise reduction", command=self.noise_reduction, width=10, height=1)
         self.noise_button.grid(row=9, column=0, pady=5)
 
-        self.contour_detection_button = tk.Button(self.button_frame, text="contour_detection",
-                                                  command=self.contour_detection, width=10, height=1)
+        self.contour_detection_button = tk.Button(self.button_frame, text="contour_detection",command=self.contour_detection, width=10, height=1)
         self.contour_detection_button.grid(row=10, column=0, pady=5)
 
-        self.color_space_conversion_button = tk.Button(self.button_frame, text="color_space_conversion",
-                                                       command=self.color_space_conversion, width=15, height=1)
+        self.color_space_conversion_button = tk.Button(self.button_frame, text="color_space_conversion",command=self.color_space_conversion, width=15, height=1)
         self.color_space_conversion_button.grid(row=11, column=0, pady=5)
 
-        self.adaptive_threshold_button = tk.Button(self.button_frame, text="Adaptive Threshold",
-                                                   command=self.adaptive_threshold, width=10, height=1)
+        self.adaptive_threshold_button = tk.Button(self.button_frame, text="Adaptive Threshold", command=self.adaptive_threshold, width=10, height=1)
         self.adaptive_threshold_button.grid(row=12, column=0, pady=5)
 
         self.canvas = tk.Canvas(master, width=1080, height=800, borderwidth=1, relief="solid")
@@ -105,8 +99,6 @@ class ImageProcessingGUI:
         self.threshold_label = tk.Label(self.master, text="Threshold")
         self.threshold_button = tk.Button(self.master, text="Apply Threshold", command=self.apply_threshold, width=10, height=1)
         self.threshold_button.place(relx=0.7, rely=0.93)
-
-
 
     def open_image(self):
         file_path = filedialog.askopenfilename()
