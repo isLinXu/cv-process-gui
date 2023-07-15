@@ -40,3 +40,33 @@ def canny_edge_detection(img, low_threshold, high_threshold):
 def threshold(img, thresh_value):
     _, thresh_img = cv2.threshold(img, thresh_value, 255, cv2.THRESH_BINARY)
     return thresh_img
+
+def smooth(img, ksize):
+    return cv2.medianBlur(img, ksize)
+
+def morphology(img, operation, ksize):
+    kernel = np.ones((ksize, ksize), np.uint8)
+    return cv2.morphologyEx(img, operation, kernel)
+
+def equalize_histogram(img):
+    if len(img.shape) == 3:
+        img_yuv = cv2.cvtColor(img, cv2.COLOR_BGR2YUV)
+        img_yuv[:,:,0] = cv2.equalizeHist(img_yuv[:,:,0])
+        return cv2.cvtColor(img_yuv, cv2.COLOR_YUV2BGR)
+    else:
+        return cv2.equalizeHist(img)
+
+def sobel_edge_detection(img, dx, dy, ksize):
+    return cv2.Sobel(img, cv2.CV_64F, dx, dy, ksize=ksize)
+
+def laplacian_edge_detection(img, ksize):
+    return cv2.Laplacian(img, cv2.CV_64F, ksize=ksize)
+
+def scharr_edge_detection(img, dx, dy):
+    return cv2.Scharr(img, cv2.CV_64F, dx, dy)
+
+def pyramid(img, operation, level):
+    if operation == "上采样":
+        return cv2.pyrUp(img, dstsize=(img.shape[1]*2, img.shape[0]*2))
+    else:
+        return cv2.pyrDown(img, dstsize=(img.shape[1]//2, img.shape[0]//2))
