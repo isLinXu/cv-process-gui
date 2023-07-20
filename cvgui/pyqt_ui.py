@@ -1,10 +1,11 @@
 import sys
 import os
+import cv2
+import numpy as np
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QPushButton, QFileDialog, QWidget, \
-    QScrollArea, QAction, QMessageBox, QHBoxLayout
+    QScrollArea, QAction, QMessageBox, QHBoxLayout, QInputDialog
 from PyQt5.QtGui import QPixmap, QImage
 from PyQt5.QtCore import Qt
-import cv2
 
 
 class MainWindow(QMainWindow):
@@ -20,11 +21,25 @@ class MainWindow(QMainWindow):
         open_action.triggered.connect(self.select_image)
         file_menu.addAction(open_action)
 
+        # 添加保存图像的动作
+        save_action = QAction('Save', self)
+        save_action.triggered.connect(self.save_image)
+        file_menu.addAction(save_action)
+
+        # 添加旋转图像的动作
+        rotate_action = QAction('Rotate', self)
+        rotate_action.triggered.connect(self.rotate_image)
+        file_menu.addAction(rotate_action)
+
+        # 添加镜像翻转图像的动作
+        flip_action = QAction('Flip', self)
+        flip_action.triggered.connect(self.flip_image)
+        file_menu.addAction(flip_action)
+
         # 创建按钮
         self.process_button = QPushButton('Process Image')
         self.process_button.clicked.connect(self.process_image)
 
-        # 创建路径切换按钮
         self.previous_button = QPushButton('Previous')
         self.next_button = QPushButton('Next')
         self.previous_button.clicked.connect(self.previous_image)
@@ -47,7 +62,6 @@ class MainWindow(QMainWindow):
         layout = QVBoxLayout()
         layout.addWidget(self.process_button)
 
-        # 创建路径切换布局
         path_layout = QHBoxLayout()
         path_layout.addWidget(self.previous_button)
         path_layout.addWidget(self.next_button)
@@ -55,7 +69,6 @@ class MainWindow(QMainWindow):
 
         layout.addWidget(self.scroll_area)
 
-        # 创建中心窗口并设置布局
         central_widget = QWidget()
         central_widget.setLayout(layout)
         self.setCentralWidget(central_widget)
@@ -66,7 +79,6 @@ class MainWindow(QMainWindow):
         self.selected_image = None
 
     def select_image(self):
-        # 弹出文件选择对话框
         file_dialog = QFileDialog()
         file_dialog.setFileMode(QFileDialog.Directory)
         if file_dialog.exec_():
@@ -102,17 +114,16 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, 'Warning', 'Please select an image first!')
             return
 
-        # 在这里对图像进行处理，比如使用OpenCV进行图像算法处理
         processed_image = self.selected_image
+        # TODO: Add image processing operations here
 
         # 显示处理结果
-        self.show_image(processed_image)
+        self.show_windows_image(processed_image)
 
-    def show_image(self, image_path):
-        # 从图像路径加载图像数据
-        self.selected_image = cv2.imread(image_path)
 
-        # 将OpenCV图像对象转换为QPixmap对象并在画布上显示图像
+    def show_windows_image(self, image):
+        self.selected_image = image
+
         image_rgb = cv2.cvtColor(self.selected_image, cv2.COLOR_BGR2RGB)
         pixmap = QPixmap.fromImage(QImage(image_rgb.data, image_rgb.shape[1], image_rgb.shape[0], QImage.Format_RGB888))
         self.canvas_label.setPixmap(pixmap.scaled(self.canvas_label.width(), self.canvas_label.height(),
@@ -121,7 +132,89 @@ class MainWindow(QMainWindow):
 
 
 
-# 创建应用程序和主窗口
+    def show_image(self, image_path):
+        src_img = cv2.imread(image_path)
+        self.selected_image = src_img
+
+        image_rgb = cv2.cvtColor(self.selected_image, cv2.COLOR_BGR2RGB)
+        pixmap = QPixmap.fromImage(QImage(image_rgb.data, image_rgb.shape[1], image_rgb.shape[0], QImage.Format_RGB888))
+        self.canvas_label.setPixmap(pixmap.scaled(self.canvas_label.width(), self.canvas_label.height(),
+                                                  Qt.KeepAspectRatio, Qt.SmoothTransformation))
+
+    def save_image(self):
+        if self.selected_image is None:
+            QMessageBox.warning(self, 'Warning', 'Please select an image first!')
+            return
+
+        file_dialog = QFileDialog()
+        file_dialog.setAcceptMode(QFileDialog.AcceptSave)
+        if file_dialog.exec_():
+            file_name = file_dialog.selectedFiles()[0]
+
+            # 保存图像
+            cv2.imwrite(file_name, self.selected_image)
+
+    def rotate_image(self):
+        if self.selected_image is None:
+            QMessageBox.warning(self, 'Warning', 'No image selected!')
+            return
+
+        rotation_angle, ok = QInputDialog.getInt(self, 'Rotate Image', 'Enter rotation angle:', 0, -360, 360)
+        if ok:
+            # 使用OpenCV旋转图像
+            rows, cols, _ = self.selected_image.shape
+            M = cv2.getRotationMatrix2D((cols / 2, rows / 2), rotation_angle, 1)
+            rotated_image = cv2.warpAffine(self.selected_image, M, (cols, rows))
+            self.selected_image = rotated_image
+
+            # 显示旋转后的图像
+            self.show_windows_image(rotated_image)
+
+    def flip_image(self):
+        if self.selected_image is None:
+            QMessageBox.warning(self, 'Warning', 'No image selected!')
+            return
+
+        choice, ok = QInputDialog.getItem(self, 'Flip Image', 'Choose flip direction:', ['Horizontal', 'Vertical'])
+        if ok:
+            # 使用OpenCV镜像翻转图像
+            if choice == 'Horizontal':
+                flipped_image = cv2.flip(self.selected_image, 1)
+            else:  # choice == 'Vertical'
+                flipped_image = cv2.flip(self.selected_image, 0)
+
+            self.selected_image = flipped_image
+
+            # 显示翻转后的图像
+            self.show_windows_image(flipped_image)
+
+    def adjust_brightness(self):
+        if self.selected_image is None:
+            QMessageBox.warning(self, 'Warning', 'No image selected!')
+
+            brightness, ok = QInputDialog.getInt(self, 'Adjust Brightness', 'Enter brightness value (-255 to 255):', 0, -255, 255)
+            if ok:
+                # 使用OpenCV调整亮度
+                adjusted_image = cv2.convertScaleAbs(self.selected_image, alpha=1, beta=brightness)
+                self.selected_image = adjusted_image
+
+                # 显示调整后的图像
+                self.show_windows_image(adjusted_image)
+
+    def adjust_contrast(self):
+        if self.selected_image is None:
+            QMessageBox.warning(self, 'Warning', 'No image selected!')
+
+            contrast, ok = QInputDialog.getDouble(self, 'Adjust Contrast', 'Enter contrast value (1.-3.):', 1., 1.,
+                                                      3.)
+            if ok:
+            # 使用OpenCV调整对比度
+                adjusted_image = cv2.convertScaleAbs(self.selected_image, alpha=contrast, beta=0)
+                self.selected_image = adjusted_image
+
+                # 显示调整后的图像
+                self.show_windows_image(adjusted_image)
+
 app = QApplication(sys.argv)
 window = MainWindow()
 window.show()
